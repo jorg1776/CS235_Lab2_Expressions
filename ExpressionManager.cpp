@@ -1,5 +1,8 @@
 #include "ExpressionManager.h"
-
+#include <vector>
+#include <sstream>
+#include <istream>
+#include <iterator>
 
 ExpressionManager::ExpressionManager()
 {
@@ -67,7 +70,72 @@ string ExpressionManager::postfixToInfix(string postfixExpression)
 
 string ExpressionManager::postfixEvaluate(string postfixExpression)
 {
-	return string();
+	stack<int> operands;
+	istringstream iss(postfixExpression);
+	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
+	
+	if (isdigit(tokens.at(0)[0])) //if first token is not a number, return invalid
+	{
+		return "invalid";
+	}
+
+	for (string token : tokens)
+	{
+		if (isdigit(token[0]))
+		{
+			int num = (int)token[0];
+			operands.push(num);
+		}
+		else if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%")
+		{
+			int right = operands.top();
+			operands.pop();
+			int left = operands.top();
+			operands.pop();
+
+			if (token == "+") 
+			{ 
+				operands.push(right + left); 
+			}
+			else if (token == "-") 
+			{ 
+				operands.push(right - left); 
+			}
+			else if (token == "*") 
+			{ 
+				operands.push(right * left); 
+			}
+			else if (token == "/") 
+			{ 
+				if (left != 0)
+				{
+					operands.push(right / left);
+				}
+				else
+				{
+					return "invalid";
+				}
+			}
+			else if (token == "%") 
+			{ 
+				if (left != 0)
+				{
+					operands.push(right % left);
+				}
+				else
+				{
+					return "invalid";
+				}
+			}
+		}
+		else 
+		{
+			return "invalid";
+		}
+	}
+
+	int result = operands.top();
+	return to_string(result);
 }
 
 string ExpressionManager::infixToPostfix(string infixExpression)
