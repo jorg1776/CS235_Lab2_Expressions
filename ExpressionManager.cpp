@@ -73,11 +73,6 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 	stack<int> operands;
 	istringstream iss(postfixExpression);
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
-	
-	if (isdigit(tokens.at(0)[0])) //if first token is not a number, return invalid
-	{
-		return "invalid";
-	}
 
 	for (string token : tokens)
 	{
