@@ -50,7 +50,14 @@ bool ExpressionManager::isBalanced(string expression)
 		index++;
 	}
 
-	return balanced;
+	if (parenthesis.size() == 0 && balanced)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 string ExpressionManager::postfixToInfix(string postfixExpression)
