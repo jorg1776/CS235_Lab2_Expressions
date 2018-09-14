@@ -73,19 +73,20 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 	stack<int> operands;
 	istringstream iss(postfixExpression);
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
-
+	iss.clear();
+	
 	for (string token : tokens)
 	{
 		if (isdigit(token[0]))
 		{
-			int num = (int)token[0];
+			int num = stoi(token);
 			operands.push(num);
 		}
 		else if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%")
 		{
-			int right = operands.top();
-			operands.pop();
 			int left = operands.top();
+			operands.pop();
+			int right = operands.top();
 			operands.pop();
 
 			if (token == "+") 
@@ -128,7 +129,6 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 			return "invalid";
 		}
 	}
-
 	int result = operands.top();
 	return to_string(result);
 }
