@@ -31,7 +31,7 @@ bool ExpressionManager::isBalanced(string expression)
 				balanced = false;
 			}
 
-			if (character == ')' && parenthesis.top() != '(')
+			else if (character == ')' && parenthesis.top() != '(')
 			{
 				balanced = false;
 			}
