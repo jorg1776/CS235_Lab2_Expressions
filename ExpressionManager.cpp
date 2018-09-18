@@ -15,7 +15,7 @@ ExpressionManager::~ExpressionManager()
 
 bool isOpenParenthesis(string op)
 {
-	if (character == "(" || character == "[" || character == "{")
+	if (op == "(" || op == "[" || op == "{")
 	{
 		return true;
 	}
