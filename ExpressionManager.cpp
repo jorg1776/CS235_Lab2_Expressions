@@ -13,6 +13,42 @@ ExpressionManager::~ExpressionManager()
 {
 }
 
+bool isOpenParenthesis(string op)
+{
+	if (character == '(' || character == '[' || character == '{')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool isCloseParenthesis(string op)
+{
+	if (op == ')' || op == ']' || op == '}')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool isOperator(string op)
+{
+	if (op == '+' || op == '-' || op == '*' || op == '/' || op == '%')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool ExpressionManager::isBalanced(string expression)
 {
 	stack<char> parenthesis;
@@ -23,11 +59,11 @@ bool ExpressionManager::isBalanced(string expression)
 	{
 		char character = expression[index];
 
-		if (character == '(' || character == '[' || character == '{')
+		if (isOpenParenthesis(character))
 		{
 			parenthesis.push(character);
 		}
-		else if (character == ')' || character == ']' || character == '}')
+		else if (isCloseParenthesis(character))
 		{
 			if (parenthesis.size() == 0)
 			{
@@ -63,14 +99,9 @@ bool ExpressionManager::isBalanced(string expression)
 	}
 }
 
-string ExpressionManager::postfixToInfix(string postfixExpression)
-{
-	return string();
-}
-
 string ExpressionManager::postfixEvaluate(string postfixExpression)
 {
-	stack<int> operands;
+	stack<int> opStack;
 	istringstream iss(postfixExpression);
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
 	iss.clear();
@@ -85,32 +116,32 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 		if (isdigit(token[0]))
 		{
 			int num = stoi(token);
-			operands.push(num);
+			opStack.push(num);
 		}
-		else if (token == "+" || token == "-" || token == "*" || token == "/" || token == "%")
+		else if (isOperator(token))
 		{
-			int left = operands.top();
-			operands.pop();
-			int right = operands.top();
-			operands.pop();
+			int left = opStack.top();
+			opStack.pop();
+			int right = opStack.top();
+			opStack.pop();
 
 			if (token == "+") 
 			{ 
-				operands.push(right + left); 
+				opStack.push(right + left); 
 			}
 			else if (token == "-") 
 			{ 
-				operands.push(right - left); 
+				opStack.push(right - left); 
 			}
 			else if (token == "*") 
 			{ 
-				operands.push(right * left); 
+				opStack.push(right * left); 
 			}
 			else if (token == "/") 
 			{ 
 				if (left != 0)
 				{
-					operands.push(right / left);
+					opStack.push(right / left);
 				}
 				else
 				{
@@ -121,7 +152,7 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 			{ 
 				if (left != 0)
 				{
-					operands.push(right % left);
+					opStack.push(right % left);
 				}
 				else
 				{
@@ -134,11 +165,141 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 			return "invalid";
 		}
 	}
-	int result = operands.top();
+	int result = opStack.top();
 	return to_string(result);
 }
 
+int getPrecedence(string op)
+{
+	// 2: high precedence, 1: low precedence, 0: no precedence
+	if (op == "*" || op == "/" || op == "%")
+	{
+		return 2;
+	}
+	else if (op == "+", op == "-")
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+bool process_operator(string &op, stack<string> &opStack, string &postfix)
+{
+	if (opStack.empty() || isOpenParenthesis(opStack.top()) || isOpenParenthesis(op))
+	{
+		opStack.push(op);
+		return true;
+	}
+	else if (isCloseParenthesis(op))
+	{
+		if(op == ")")
+		{
+			while (opStack.top() != "(")
+			{
+				string value = opStack.top();
+				postfix.append(value + " ");
+				opStack.pop();
+
+				if (opStack.empty())
+				{
+					return false;
+				}
+			}
+		}
+		else if (op == "]")
+		{
+			while (opStack.top() != "[")
+			{
+				string value = opStack.top();
+				postfix.append(value + " ");
+				opStack.pop();
+
+				if (opStack.empty())
+				{
+					return false;
+				}
+			}
+		}
+		else if (op == "}")
+		{
+			while (opStack.top() != "{")
+			{
+				string value = opStack.top();
+				postfix.append(value + " ");
+				opStack.pop();
+
+				if (opStack.empty())
+				{
+					return false;
+				}
+			}
+		}
+
+		opStack.pop();
+		return true;
+	}
+	else
+	{
+		//while the current operator precedence is less than or equal to the stack top precedence, pop stack onto postfix
+		while(getPrecedence(op) <= getPrecedence(opStack.top()))
+		{
+			string value = opStack.top();
+			postfix.append(value + " ");
+			opStack.pop();
+		}
+
+		opStack.push(op);
+		return true;
+	}
+}
+
 string ExpressionManager::infixToPostfix(string infixExpression)
+{
+	string postfix = "";
+	stack<int> opStack;
+	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
+	iss.clear();
+
+	for (string token : tokens)
+	{
+		if (isdigit(token))
+		{
+			postfix.append(token + " ");
+		}
+		else if (isOpenParenthesis(token) || isCloseParenthesis(token) || isOperator(token))
+		{
+			if (!process_operator(token, opStack, postfix)) //calls process_operator, and if it returns false, return "invalid"
+			{
+				return "invalid";
+			}
+		}
+		else
+		{
+			return "invalid";
+		}
+	}
+
+	while (!opStack.empty())
+	{
+		string value = opStack.top();
+		postfix.append(value + " ");
+		opStack.pop();
+	}
+
+	if (!postfixEvaluate(postfix) != "invalid")
+	{
+		return postfix;
+	}
+	else
+	{
+		return "invalid";
+	}
+}
+
+string ExpressionManager::postfixToInfix(string postfixExpression)
 {
 	return string();
 }
