@@ -266,7 +266,7 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 
 	for (string token : tokens)
 	{
-		if (isdigit(token))
+		if (isdigit(token[0]))
 		{
 			postfix.append(token + " ");
 		}
