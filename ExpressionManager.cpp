@@ -259,7 +259,7 @@ bool process_operator(string &op, stack<string> &opStack, string &postfix)
 string ExpressionManager::infixToPostfix(string infixExpression)
 {
 	string postfix = "";
-	stack<int> opStack;
+	stack<string> opStack;
 	istringstream iss(infixExpression);
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
 	iss.clear();
