@@ -260,6 +260,7 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 {
 	string postfix = "";
 	stack<int> opStack;
+	istringstream iss(postfixExpression);
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
 	iss.clear();
 
