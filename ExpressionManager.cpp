@@ -299,5 +299,34 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 
 string ExpressionManager::postfixToInfix(string postfixExpression)
 {
-	return string();
+	stack<string> expStack;
+	istringstream iss(postfixExpression);
+	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
+
+	for (string token : tokens)
+	{
+		if (isdigit(token[0]))
+		{
+			expStack.push(token);
+		}
+		else if (isOperator(token))
+		{
+			string right = expStack.top();
+			expStack.pop();
+			string left = expStack.top();
+			expStack.pop();
+
+			string expression = "( " + left + " " + token + " " + right + " )";
+			expStack.push(expression);
+		}
+	}
+
+	if (expStack.size() == 1)
+	{
+		return expStack.top();
+	}
+	else
+	{
+		return "invalid";
+	}
 }
