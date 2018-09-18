@@ -176,7 +176,7 @@ int getPrecedence(string op)
 	{
 		return 2;
 	}
-	else if (op == "+", op == "-")
+	else if (op == "+" || op == "-")
 	{
 		return 1;
 	}
@@ -243,14 +243,12 @@ bool process_operator(string &op, stack<string> &opStack, string &postfix)
 	}
 	else
 	{
-		//while the current operator precedence is less than or equal to the stack top precedence, pop stack onto postfix
-		while(getPrecedence(op) <= getPrecedence(opStack.top()))
+		while(opStack.size() > 0 && getPrecedence(op) <= getPrecedence(opStack.top()))
 		{
 			string value = opStack.top();
 			postfix.append(value + " ");
-			opStack.pop();
+			opStack.pop(); 
 		}
-
 		opStack.push(op);
 		return true;
 	}
@@ -263,7 +261,6 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 	istringstream iss(infixExpression);
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
 	iss.clear();
-
 	for (string token : tokens)
 	{
 		if (isdigit(token[0]))
@@ -282,7 +279,7 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 			return "invalid";
 		}
 	}
-
+	
 	while (!opStack.empty())
 	{
 		string value = opStack.top();
@@ -290,7 +287,7 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 		opStack.pop();
 	}
 
-	if (!postfixEvaluate(postfix) != "invalid")
+	if (postfixEvaluate(postfix) != "invalid")
 	{
 		return postfix;
 	}
