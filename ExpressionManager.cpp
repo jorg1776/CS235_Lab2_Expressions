@@ -13,6 +13,20 @@ ExpressionManager::~ExpressionManager()
 {
 }
 
+bool isInteger(string value)
+{
+	
+	for (char c : value)
+	{
+		if (!isdigit(c))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool isOpenParenthesis(string op)
 {
 	if (op == "(" || op == "[" || op == "{")
@@ -106,14 +120,14 @@ string ExpressionManager::postfixEvaluate(string postfixExpression)
 	vector<string> tokens(istream_iterator<string>{iss}, istream_iterator<string>());
 	iss.clear();
 	
-	if (!isdigit(tokens.at(0)[0])) //if first two tokens are not digits, return invalid
+	if (!isInteger(tokens.at(0))
 	{
 		return "invalid";
 	}
 
 	for (string token : tokens)
 	{
-		if (isdigit(token[0]))
+		if (isInteger(token))
 		{
 			int num = stoi(token);
 			opStack.push(num);
@@ -263,7 +277,7 @@ string ExpressionManager::infixToPostfix(string infixExpression)
 	iss.clear();
 	for (string token : tokens)
 	{
-		if (isdigit(token[0]))
+		if (isinteger(token))
 		{
 			postfix.append(token + " ");
 		}
@@ -305,7 +319,7 @@ string ExpressionManager::postfixToInfix(string postfixExpression)
 
 	for (string token : tokens)
 	{
-		if (isdigit(token[0]))
+		if (isInteger(token))
 		{
 			expStack.push(token);
 		}
