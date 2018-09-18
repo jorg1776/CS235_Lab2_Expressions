@@ -59,11 +59,11 @@ bool ExpressionManager::isBalanced(string expression)
 	{
 		char character = expression[index];
 
-		if (isOpenParenthesis(character))
+		if (isOpenParenthesis((string)character))
 		{
 			parenthesis.push(character);
 		}
-		else if (isCloseParenthesis(character))
+		else if (isCloseParenthesis((string)character))
 		{
 			if (parenthesis.size() == 0)
 			{
