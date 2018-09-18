@@ -15,7 +15,7 @@ ExpressionManager::~ExpressionManager()
 
 bool isOpenParenthesis(string op)
 {
-	if (character == '(' || character == '[' || character == '{')
+	if (character == "(" || character == "[" || character == "{")
 	{
 		return true;
 	}
@@ -27,7 +27,7 @@ bool isOpenParenthesis(string op)
 
 bool isCloseParenthesis(string op)
 {
-	if (op == ')' || op == ']' || op == '}')
+	if (op == ")" || op == "]" || op == "}")
 	{
 		return true;
 	}
@@ -39,7 +39,7 @@ bool isCloseParenthesis(string op)
 
 bool isOperator(string op)
 {
-	if (op == '+' || op == '-' || op == '*' || op == '/' || op == '%')
+	if (op == "+" || op == "-" || op == "*" || op == "/" || op == "%")
 	{
 		return true;
 	}
